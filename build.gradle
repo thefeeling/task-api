@@ -1,0 +1,98 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.6.RELEASE'
+        queryDslVersion = '4.2.1'
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.10")
+    }
+}
+
+plugins {
+    id "org.asciidoctor.convert" version "1.5.9.2"
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'idea'
+apply plugin: "com.ewerk.gradle.plugins.querydsl"
+
+
+def querydslSrcDir = 'src/main/generated'
+querydsl {
+    library = "com.querydsl:querydsl-apt"
+    jpa = true
+    querydslSourcesDir = querydslSrcDir
+}
+
+compileQuerydsl{
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', querydslSrcDir]
+        }
+    }
+}
+
+group = 'me.daniel'
+version = '1.0.0-RELEASE'
+sourceCompatibility = 1.8
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+def lombokVersion = '1.18.4'
+dependencies {
+    compile group: 'com.github.javafaker', name: 'javafaker', version: '0.15'
+
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-cache')
+
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.1.2.RELEASE')
+    implementation('org.springframework.cloud:spring-cloud-starter-openfeign:2.1.2.RELEASE')
+
+    implementation("com.querydsl:querydsl-jpa:${queryDslVersion}")
+    implementation("com.auth0:java-jwt:3.8.1")
+    compile("com.github.ben-manes.caffeine:caffeine:2.7.0")
+
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor(
+        "org.projectlombok:lombok:${lombokVersion}",
+        "org.springframework.boot:spring-boot-configuration-processor"
+    )
+
+    runtimeOnly('com.h2database:h2')
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude module: 'junit'
+    }
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
+    testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+}
