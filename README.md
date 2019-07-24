@@ -4,7 +4,8 @@
 
 ### 어플리케이션 실행 시 참고사항
 - 어플리케이션 실행은 `task-api-1.0.0-RELEASE.jar`를 참고하여 실행
-  - [다운로드 링크](https://drive.google.com/file/d/1MJEr1K_xR5fpr8q35_hkIHZ2jkFqkO3W/view?usp=sharing)
+  - [다운로드 링크](https://drive.google.com/file/d/1bG7vC6FyWYHY6Aj6Z9FN7GHOZl6iGZSy/view?usp=sharing)
+
 - FRONT-END 페이지의 경우, http://localhost:8080 으로 접속하셔서 확인하실 수 있습니다.
 - github의 소스코드 중 `application.properties`에 외부에 공개되면 안되는 시크릿 값을 포함하고 있습니다.
   ```bash
@@ -181,9 +182,12 @@
 - 이메일(`email`)과 패스워드(`password`)가 모두 유효한 값이면 로그인에 성공해야 한다.
 
 
-
-
-
+##### [유저서비스] - 프로필 조회 통합테스트
+- 인증토큰이 없으면 요청에 실패해야 한다.
+- 만료된 토큰일 경우 요청에 실패해야 한다.
+- 인증 토큰의 타입이 `Bearer`가 아니면 요청에 실패해야 한다.
+- 비정상적인 토큰일 경우 요청에 실패해야 한다.
+- 정상적인 토큰일 경우 요청에 성공해야 한다.
 
 
 
