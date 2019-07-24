@@ -87,10 +87,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, e.getStatus());
     }
 
+    @ExceptionHandler(ServiceUnavailableException.class)
+    protected ResponseEntity<ErrorResponse> handleServiceUnavailableException(final ServiceUnavailableException e) {
+        log.error("handleServiceUnavailableException", e);
+        ErrorResponse response = response = ErrorResponse.of(
+            ErrorCode.SERVICE_UNAVAILABLE_ERROR,
+            ErrorResponse.FieldError.of(e.getCode(), "", e.getMsg())
+        );
+        return new ResponseEntity<>(response, e.getStatus());
+    }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error("handleEntityNotFoundException", e);
+        log.error("handleException", e);
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }

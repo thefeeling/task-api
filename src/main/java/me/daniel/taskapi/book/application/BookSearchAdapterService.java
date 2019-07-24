@@ -9,6 +9,7 @@ import me.daniel.taskapi.book.dto.BookDto;
 import me.daniel.taskapi.book.dto.KakaoBookSearchDto;
 import me.daniel.taskapi.book.dto.NaverBookSearchDto;
 import me.daniel.taskapi.global.auth.TokenPayload;
+import me.daniel.taskapi.global.error.ServiceUnavailableException;
 import me.daniel.taskapi.global.event.search.SearchedEvent;
 import me.daniel.taskapi.global.event.search.UserSearchedEvent;
 import me.daniel.taskapi.global.model.search.Keyword;
@@ -17,6 +18,7 @@ import me.daniel.taskapi.global.model.user.UserId;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import static me.daniel.taskapi.book.dto.KakaoBookSearchDto.SearchReq;
@@ -49,7 +51,11 @@ public class BookSearchAdapterService implements ApplicationEventPublisherAware 
             NaverBookSearchDto.SearchReq.of(searchDto)
         );
         if (!naverRes.isSuccess()) {
-            throw new RuntimeException("API CALL FAILURE");
+            throw new ServiceUnavailableException(
+                "도서 OPEN-API 호출에 실패했습니다.",
+                HttpStatus.SERVICE_UNAVAILABLE,
+                "FAILURE_CALL_OPEN_API"
+            );
         }
         return naverRes.toPageResult(searchDto.getPage(), searchDto.getSize());
     }
